@@ -6,8 +6,12 @@ import Hello from "./Hello.js"
 import Lab5 from "./Lab5/index.js";
 import cors from "cors";
 import UserRoutes from "./Kanbas/Users/routes.js";
+import CourseRoutes from "./Kanbas/Courses/routes.js";
 import session from "express-session";
 import "dotenv/config";
+import ModuleRoutes from "./Kanbas/Modules/routes.js";
+import AssignmentRoutes from "./Kanbas/Assignments/routes.js";
+import EnrollmentRoutes from "./Kanbas/Enrollments/routes.js"; 
 
 const app = express()
 app.use(cors(
@@ -19,17 +23,28 @@ app.use(cors(
 
 
 const sessionOptions = {
-  secret: "any string",
+  secret: process.env.SESSION_SECRET || "kanbas",
   resave: false,
   saveUninitialized: false,
 };
-app.use(
-  session(sessionOptions)
-);
+if (process.env.NODE_ENV !== "development") {
+  sessionOptions.proxy = true;
+  sessionOptions.cookie = {
+    sameSite: "none",
+    secure: true,
+    domain: process.env.NODE_SERVER_DOMAIN,
+  };
+}
+app.use(session(sessionOptions));
 
 app.use(express.json());
 
 UserRoutes(app);
+CourseRoutes(app);
+ModuleRoutes(app);
+AssignmentRoutes(app);
+EnrollmentRoutes(app);
+
 Hello(app);
 
 Lab5(app);
