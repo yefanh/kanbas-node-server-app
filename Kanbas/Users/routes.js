@@ -59,6 +59,7 @@ export default function UserRoutes(app) {
     res.json(currentUser);
   };
 
+  // find courses for enrolled user
   const findCoursesForEnrolledUser = (req, res) => {
     let { userId } = req.params;
     if (userId === "current") {
